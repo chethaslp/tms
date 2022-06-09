@@ -113,6 +113,6 @@ def rootPage():
     return render_template("index.html")
 import os
 if os.environ.get('PORT'):
-    app.run(port=os.environ['PORT'],host=os.environ['HOST'])
+    app.run(port=os.environ['PORT'],host='0.0.0.0')
 else:
     app.run()
