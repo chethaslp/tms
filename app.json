@@ -1,0 +1,7 @@
+{
+  "name": "Project TMS",
+  "description": "Timetable Management System.",
+  "image": "heroku/python",
+  "keywords": ["python", "flask" ],
+  "addons": [ "heroku-postgresql" ]
+}
