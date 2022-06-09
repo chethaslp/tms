@@ -112,4 +112,7 @@ def prefPage():
 def rootPage():
     return render_template("index.html")
 import os
-app.run(port=os.environ['PORT'])
+if os.environ.get('PORT'):
+    app.run(port=os.environ['PORT'],host=os.environ['HOST'])
+else:
+    app.run()
