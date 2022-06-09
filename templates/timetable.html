@@ -31,23 +31,18 @@
         <button type="button" class="btn btn-primary" href="#clsCarousel" data-slide="prev"><i class="carousel-control-prev-icon" aria-hidden="true"></i></button>
         <div class="btn-group" role="group">
           <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
+            View Class
           </button>
           <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            <a class="dropdown-item" href="#">Dropdown link</a>
-            <a class="dropdown-item" href="#">Dropdown link</a>
+            {% for s in clsr %}
+            <a class="dropdown-item" href="#" onclick="$('#clsCarousel').carousel({{ loop.index -1 }})">{{ s.name }}</a>
+            {% endfor %}
           </div>
         </div>
         <button type="button" class="btn btn-primary text-center" href="#clsCarousel" data-slide="next"><i style="padding: 5px;" class="carousel-control-next-icon" aria-hidden="true"></i></button>
       </div>
     </center>
-
-    <a class="btn btn-primary" href="#clsCarousel" data-slide="prev">
-        <i class="carousel-control-prev-icon" aria-hidden="true"></i>
-    </a>
-    <a class="btn btn-primary center" href="#clsCarousel" data-slide="next">
-        <center><i class="carousel-control-next-icon" aria-hidden="true"></i></center>
-    </a>
+    <br>
     <div id="clsCarousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
     
@@ -79,4 +74,9 @@
     {% endfor %}
     </div>
     </div>
+    <script>
+        $('#clsCarousel').on('slid.bs.carousel', function () {
+            $("#btnGroupDrop1").text()
+        });
+    </script>
     {% endblock %}

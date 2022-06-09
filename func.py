@@ -29,7 +29,7 @@ def gen_tt(pref, clsr, sub):
 		for h in range(u.sub_priority):
 			for i in clsr:
 				i.sData.append(u)
-	lt = collections.deque([],len(clsr))
+	lt = collections.deque([],len(clsr)+2)
 
 	for i in range(0,pref['t_period_pd']):
 		for x in range(0,pref['t_day']):
