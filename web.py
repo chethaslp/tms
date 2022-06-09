@@ -111,4 +111,5 @@ def prefPage():
 @app.route('/')
 def rootPage():
     return render_template("index.html")
-app.run()
+import os
+app.run(port=os.environ['PORT'])
