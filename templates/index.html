@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+
+    {% block head %}
+        <style type="text/css">
+            td,th {
+                text-align: center;
+                vertical-align: middle;
+            }
+            td.p2 {
+                background-color: lightblue;
+            }
+            td.p1 {
+                background-color: rgb(252, 182, 117);
+            }
+        </style>
+    {% endblock %}
+
+	{% block content %}
+     
+    
+    <div class="card">
+        <div class="card-header">Getting Started</div>
+        <div class="card-body">
+            <div class="row card">
+                <div class="card-body"><strong>1.</strong> Set Preferences</div>
+                <div class="card-footer text-center"><a class="btn btn-primary" href="/pref" >Preferences</a></div>
+            </div>
+            <br>
+            <div class="row card">
+                <div class="card-body"><strong>1.</strong> Select Subjects</div>
+                <div class="card-footer text-center"><a class="btn btn-primary" href="/sub_select" >Select Subjects</a></div>
+            </div>
+            <br>
+            <div class="row card">
+                <div class="card-body"><strong>1.</strong> Generate TimeTable</div>
+                <div class="card-footer text-center"><a class="btn btn-primary" href="/timetable" >Generate Timetable</a></div>
+            </div>
+        </div>
+    </div>
+    
+    {% endblock %}

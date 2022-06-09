@@ -1,0 +1,153 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% set t_sub_priority=0 %}
+	<ul class="list-group">{% set t_sub_priority=namespace(value=0) %}{% for i in t_sub %}
+		<li class="list-group-item {%if i.is_practical %}list-group-item-warning{% else %}list-group-item-primary{% endif %} d-flex justify-content-between align-items-center">
+		<div class="d-flex justify-content-center">
+			{{ i.title }}
+		</div>
+		<div style="vertical-align: center;">
+			<div class="input-group input-group-sm mb-3">
+				<span class="input-group-text">{{ i.sub_priority }}{% set t_sub_priority.value = t_sub_priority.value + i.sub_priority %}</span>
+				<span class="input-group-text">classes/week</span>
+				<button class="btn btn-primary" type="button" id="btn-edit" onclick="showEditDiag('{{i.title}}','{{i.sub_code}}','{{i.sub_priority}}','{{i.is_practical}}')" ><i class="fa fa-edit" aria-hidden="true"></i></button>
+				<button class="btn btn-danger" type="button" id="btn-rm" onclick="showRmDiag('{{i.title}}','{{i.sub_code}}')"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+			</div>
+		</div>
+		</li>{% endfor %}
+	</ul>
+	<div class="container-fluid" style="padding: 10px;">
+			<div class="input-group">
+				<span class="input-group-text">Total Subjects: </span>
+				<span class="input-group-text badge-primary"> {{t_sub | length}} </span>
+			</div>
+			<div class="row justify-content-center" style="padding: 10px; margin-left: 10px;">
+			<div class="col"><div class="input-group">
+				<span class="input-group-text">Required Total Classes per week: </span>
+				<span class="input-group-text badge-primary"> {% set y = pref['t_day'] * pref['t_period_pd'] %}{{y}} </span>
+			</div></div>
+			<div class="col"><div class="input-group">
+				<span class="input-group-text">Calculated Classes per week: </span>
+				<span class="input-group-text {% if y == t_sub_priority.value %}badge-primary{% elif y < t_sub_priority.value %}badge-danger{% else %}badge-warning{% endif %}"> {{t_sub_priority.value}} </span>
+			</div></div>
+		</div>
+	</div>
+
+	<br><hr>
+	<form class="card" method="post" style="padding: 5px;" action="/sub_select">
+		<input type="text" name="a" value="as" hidden> 
+		<h4 class="card-header">Add Subject</h4>
+	  <div class="card-body">
+	    <div class="form-group col" style="padding: 10px;">
+	      <label for="sub_title">Subject Title</label>
+	      <input type="text" name="sub_title" class="form-control" id="sub_title" placeholder="Subject title" required>
+	    </div>
+	    <div class="form-group col" style="padding: 10px;">
+	      <label for="sub_code">Subject Code</label>
+	      <input type="number" name="sub_code" class="form-control" id="sub_code" placeholder="Subject code" required>
+	    </div>
+	  <div class="form-group" style="padding: 10px;">
+	    <label for="sub_priority">Classes per week</label>
+	    <input type="number" name="sub_priority" class="form-control" id="sub_priority" placeholder="7" required>
+	  </div>
+	  <div class="form-group" style="padding: 10px;">
+	    <div class="form-check">
+	      <input class="form-check-input" name="sub_prac" type="checkbox" id="sub_prac">
+	      <label class="form-check-label" for="sub_prac">It is a practical period.</label>
+	    </div>
+	  </div>
+	  <div class="row" style="padding: 10px;">
+		<button type="submit" class="btn btn-primary">Add Subject</button>
+	  </div>
+	</div>
+</form>
+<br>
+
+<!-- Dialog Box - Remove -->
+<div class="modal fade" id="rmsub-diag" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="rmsub-diag-title">Remove Subject?</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <i class="fa fa-close"></i>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  Do you want to remove the following Subject?
+			<div><i style="padding-right: 5px; margin-left: 15px;" class="fa fa-book"></i><strong id="rm-diag-txt">Subject 1</strong></div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		  <button type="button" class="btn btn-primary" id="modal-rm-btn">Remove</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+
+<!-- Dialog Box - Edit -->
+<div class="modal fade" id="edsub-diag" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="rmsub-diag-title">Edit Subject</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <i class="fa fa-close"></i>
+		  </button>
+		</div>
+		<div class="modal-body">
+			<form method="post" action="/sub_select">
+				<input type="text" name="a" value="ed" hidden>
+				<input type="text" name="sub_code" id="ed-sub_code" hidden>
+				<div class="card-body">
+					<div class="form-group col" style="padding: 10px;">
+					<label for="sub_title">Subject Title</label>
+					<input type="text" name="sub_title" class="form-control" id="ed-sub_title" value= "" disabled>
+					</div>
+				<div class="form-group" style="padding: 10px;">
+					<label for="sub_priority">Classes per week</label>
+					<input type="number" name="sub_priority" min="1" class="form-control" id="ed-sub_priority" placeholder="7" required>
+				</div>
+				<div class="form-group" style="padding: 10px;">
+					<div class="form-check">
+					<input class="form-check-input" name="sub_prac" type="checkbox" id="ed-sub_prac">
+					<label class="form-check-label" for="sub_prac">It is a practical period.</label>
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			<button type="submit" class="btn btn-primary" id="modal-rm-btn">Save Changes</button>
+			</div>
+		</form>
+	  </div>
+	</div>
+  </div>
+
+  <form id="rmSub" action="/sub_select" method="post" hidden>
+	  <input type="text" name="a" value="rm">
+	  <input type="text" name="sub_code" id="rmSub_id">
+  </form>
+
+{% endblock %}
+{% block script%}
+<script>
+	const showRmDiag = function(s,i){
+		$('#rmsub-diag').modal('show');
+		$("#rm-diag-txt").text(s);
+		$("#modal-rm-btn").on("click", function(e){
+			$("#rmSub_id").val(i);
+			$("#rmSub").submit();
+		});
+	};
+	const showEditDiag = function(s,i,p,y){
+		$("#edsub-diag").modal('show');
+		$("#ed-sub_title").val(s);
+		$("#ed-sub_priority").val(p);
+		$("#ed-sub_code").val(i);
+		$("#ed-sub_prac").prop("checked",y=="True")
+	};
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'main.html' %}
+
+    {% block head %}
+        <style type="text/css">
+            td,th {
+                text-align: center;
+                vertical-align: middle;
+            }
+            td.p2 {
+                background-color: lightblue;
+            }
+            td.p1 {
+                background-color: rgb(252, 182, 117);
+            }
+        </style>
+    {% endblock %}
+
+	{% block content %}
+    <div class="container-fluid">
+        <label for="key_txt" style="text-align: left;"class="col-form-label">Timetable Code :</label>
+        <div class="container-fluid row">
+            <div class="col" width="50%"><input style="text-align: center;" type="text" class="form-control" value="{{ key }}" id="key_txt" readonly></div>
+            <div class="col"><a class="btn btn-primary" alt="Save Timetable" style="color: white;">Save <i class="fa fa-save"></i></a></div>
+            <div class="col text-right" width="50%"><a text-align="center" class="btn btn-secondary" href="/timetable">Regenerate Timetable</a></div>
+        </div>
+    </div>
+    <br><hr><br>
+
+    <center>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" href="#clsCarousel" data-slide="prev"><i class="carousel-control-prev-icon" aria-hidden="true"></i></button>
+        <div class="btn-group" role="group">
+          <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <a class="dropdown-item" href="#">Dropdown link</a>
+            <a class="dropdown-item" href="#">Dropdown link</a>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary text-center" href="#clsCarousel" data-slide="next"><i style="padding: 5px;" class="carousel-control-next-icon" aria-hidden="true"></i></button>
+      </div>
+    </center>
+
+    <a class="btn btn-primary" href="#clsCarousel" data-slide="prev">
+        <i class="carousel-control-prev-icon" aria-hidden="true"></i>
+    </a>
+    <a class="btn btn-primary center" href="#clsCarousel" data-slide="next">
+        <center><i class="carousel-control-next-icon" aria-hidden="true"></i></center>
+    </a>
+    <div id="clsCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+    
+    {% for s in clsr %}
+    <div class="carousel-item {% if loop.index == 1%}active{%endif%}">
+    <h3 class="text-center"> Timetable for {{ s.name }}</h3>
+    <div height="5"></div>
+        <table class="table table-bordered table-hover center">
+            <thead>
+        	<tr class="thead-dark center"> 
+                <th scope="col">#</th>
+        		<th scope="col">MONDAY</th>
+        		{% set sl = (s.getData() | length) %}<th scope="col">TUESDAY</th>
+        		{% if sl > 2 %} <th scope="col">WEDNESDAY</th>{% endif %}
+        		{% if sl > 3 %} <th scope="col">THURSDAY</th>{% endif %}
+        		{% if sl > 4 %} <th scope="col">FRIDAY</th>{% endif %}
+                {% if sl > 5 %} <th scope="col">SATURDAY</th> {% endif %}
+                {% if sl > 6 %} <th scope="col">SUNDAY</th> {% endif %}
+        	</tr> 
+            </thead>{% for x in range(s.getData()[0] | length) %}
+                <tr>
+                    <th scope="row" class="table-dark">{{ loop.index }}</th> 
+                    {% for y in range(s.getData() | length) %} {% set j = s.getData()[y][x] %} {% if j.is_practical %} {% set c = "p1" %} {% else %} {% set c = "p2" %} {% endif %} <td class="{{c}}">{{j.title}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+    {% endblock %}
