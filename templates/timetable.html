@@ -35,7 +35,7 @@
           </button>
           <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
             {% for s in clsr %}
-            <a class="dropdown-item" href="#" onclick="$('#clsCarousel').carousel({{ loop.index -1 }})">{{ s.name }}</a>
+            <button class="dropdown-item" onclick="$('#clsCarousel').carousel({{ loop.index -1 }})">{{ s.name }}</button>
             {% endfor %}
           </div>
         </div>

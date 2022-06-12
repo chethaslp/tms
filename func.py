@@ -11,26 +11,34 @@ def genKey(key=None):
 	if not key: key = str(uuid.uuid4())[:4]
 	random.seed(key)
 
-
-def generateClass(cls_data,pref):
+def generateClass(pref):
 	# cls_data -> [{'n':"",'tt':[]}, {},{}]
-	rf = []
-	for i in cls_data:
-		r = [ [] for _ in range(pref['t_day'])]
-		rf.append(Classroom(i['n'], r))
+	rf = [Classroom("XII A", '001'), Classroom("XII B",'002'), Classroom("XII C",'003')]
+	for i in rf:
+		i.tt_data = [[] for _ in range(pref['t_day'])]
 	return rf
 
+def clearData(clsr,pref):
+	for i in clsr:
+		i.tt_data = [[] for _ in range(pref['t_day'])]
+	return clsr
+
 def gen_tt(pref, clsr, sub):
-	clsr = generateClass(clsr, pref)
 	s = []
 	tr = None
 
+	clsr = clearData(clsr,pref)
+
+	# Initializing Sample Data
 	for u in sub:
 		for h in range(u.sub_priority):
 			for i in clsr:
 				i.sData.append(u)
+
+	# Dequeue for dismissing period repetition
 	lt = collections.deque([],len(clsr)+2)
 
+	# Adding periods to classes
 	for i in range(0,pref['t_period_pd']):
 		for x in range(0,pref['t_day']):
 			for y in clsr:
@@ -38,8 +46,10 @@ def gen_tt(pref, clsr, sub):
 					tr = random.choice(y.sData)
 					if tr.sub_code not in lt or (i == (pref['t_period_pd']-1) and x == (pref['t_day']-1)):
 						break
+					# Checking if period per day per class is exceeding the threshold
+					if sum(1 for p in y.tt_data[x] if p.sub_code == tr.sub_code) < 3:
+						break
 				y.sData.remove(tr)
 				y.tt_data[x].append(tr)
 				lt.append(tr.sub_code)
 	return clsr
-

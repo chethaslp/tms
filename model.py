@@ -12,6 +12,7 @@ class Subject(Serializable):
 		self.sub_code = sub_code
 		self.sub_priority = sub_priority
 
+
 	def __eq__(self,sub):
 		if isinstance(sub,Subject):
 			return sub.sub_code == self.sub_code
@@ -30,11 +31,12 @@ class Subject(Serializable):
 
 class Classroom(Serializable):
 	"""docstring for Classroom"""
-	def __init__(self, name, tt_data=[]):
+	def __init__(self, name, cls_code, tt_data=[]):
 		super(Classroom, self).__init__()
 		
 		self.name = name
 		self.tt_data = tt_data
+		self.cls_code = cls_code
 
 		self.sData = []
 

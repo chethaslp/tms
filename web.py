@@ -23,39 +23,53 @@ def timetable_main():
 @app.route("/timetable/<key>")
 def timetable(key): 
     genKey(key)
-    try:
-        t_sub = deserialize(session['t_sub'])
-    except:
-        t_sub=[ Subject(12,"Maths",8),
-            Subject(13,"English",6),
-            Subject(14,"Computer",8),
-            Subject(15,"Physics",8),
-            Subject(16,"Chemistry",8),
-            Subject(17,"PET",6),
-            Subject(65,"Chemistry Lab",2,is_practical=True),
-            Subject(67,"Physics Lab",2,is_practical=True) ]
-        session['t_sub'] = serialize(t_sub)
-        return redirect("/sub_select")
+    try: t_sub = deserialize(session['t_sub'])
+    except: return redirect("/sub_select")
     
-    try: 
-        clss = session['cls']
-    except: 
-        clss = [{'n':'XI A'},{'n':'XI B'},{'n':'XI C'}]
-        session['cls'] = clss
     try: pref = session['pref']
-    except:
-        pref = {'t_day': 6,'t_period_pd': 8}
-        session['pref'] = pref
+    except: return redirect("/pref")
+
+    try: clss = deserialize(session['cls'])
+    except: return redirect("/cls_select")
+
     return render_template("timetable.html" , clsr=gen_tt(pref,clss,t_sub), key= key)
 
+@app.route("/cls_select",methods=['GET','POST'])
+def cls_select():
+    try: pref = session['pref']
+    except: return redirect("/pref")
+
+    if request.form.get("a") == "as":
+        c = Classroom(request.form.get("cls_name"),request.form.get("cls_code"))
+        a = deserialize(session['cls'])
+        a.append(c)
+        session['cls'] = serialize(a)
+    elif request.form.get("a") == "rm":
+        a = deserialize(session['cls'])
+        a = [x for x in a if x.cls_code != request.form.get("cls_code")]
+        session['cls'] = serialize(a)
+    # elif request.form.get("a") == "ed":
+    #     a = deserialize(session['cls'])
+    #     for c in a:
+    #         if c.sub_code == int(request.form.get("sub_code")):
+    #             c.sub_priority = int(request.form.get("sub_priority"))
+    #             c.is_practical = bool(request.form.get("sub_prac") == "on")
+    #             break
+    #     session['t_sub'] = serialize(a)
+
+    try: clss = deserialize(session['cls'])
+    except: 
+        clss = generateClass(pref)
+        session['cls'] = clss
+    return render_template("cls_select.html",clss=clss)
 
 @app.route("/sub_select", methods=['GET','POST'])
 def root2():
-    try: 
-        clss = session['cls']
-    except: 
-        clss = [{'n':'XI A'},{'n':'XI B'},{'n':'XI C'}]
-        session['cls'] = clss
+    try: pref = session['pref']
+    except: return redirect("/pref")
+
+    try: clss = session['cls']
+    except: return redirect("/cls_select")
 
     if request.method == "POST":
         if request.form.get("a") == "as":
@@ -89,7 +103,7 @@ def root2():
             Subject(67,"Physics Lab",2,is_practical=True) ]
         session['t_sub'] = serialize(t_sub)
     t_sub.sort(key=attrgetter("sub_priority"),reverse=True)
-    return render_template("sub_select.html",t_sub = t_sub,pref = session['pref'])
+    return render_template("sub_select.html",t_sub = t_sub,pref = pref)
 
 @app.route('/about')
 def aboutPage():
