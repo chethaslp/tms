@@ -32,7 +32,22 @@ def timetable(key):
     try: clss = deserialize(session['cls'])
     except: return redirect("/cls_select")
 
-    return render_template("timetable.html" , clsr=gen_tt(pref,clss,t_sub), key= key)
+    return render_template("timetable.html" , clsr=gen_tt(pref,clss,t_sub)[0], key= key)
+
+@app.route("/timetable_faculty/<key>")
+def timetable_faculty(key): 
+    genKey(key)
+    try: t_sub = deserialize(session['t_sub'])
+    except: return redirect("/sub_select")
+    
+    try: pref = session['pref']
+    except: return redirect("/pref")
+
+    try: clss = deserialize(session['cls'])
+    except: return redirect("/cls_select")
+
+    return render_template("timetable_faculty.html" , sbs=gen_tt(pref,clss,t_sub)[1], key= key)
+
 
 @app.route("/cls_select",methods=['GET','POST'])
 def cls_select():

@@ -24,7 +24,7 @@ def clearData(clsr,pref):
 	return clsr
 
 def gen_tt(pref, clsr, sub):
-	s = []
+	sb= {}
 	tr = None
 
 	clsr = clearData(clsr,pref)
@@ -34,22 +34,25 @@ def gen_tt(pref, clsr, sub):
 		for h in range(u.sub_priority):
 			for i in clsr:
 				i.sData.append(u)
+		u.initTT(pref)
+		sb[u.sub_code] = u
 
 	# Dequeue for dismissing period repetition
 	lt = collections.deque([],len(clsr)+2)
 
 	# Adding periods to classes
-	for i in range(0,pref['t_period_pd']):
-		for x in range(0,pref['t_day']):
+	for i in range(pref['t_period_pd']):
+		for x in range(pref['t_day']):
 			for y in clsr:
-				for _ in range(len(clsr)):
+				for _ in range(len(clsr)+10):
 					tr = random.choice(y.sData)
 					if tr.sub_code not in lt or (i == (pref['t_period_pd']-1) and x == (pref['t_day']-1)):
 						break
-					# Checking if period per day per class is exceeding the threshold
+					# Checking if number of periods for a subject per day per class is exceeding the threshold
 					if sum(1 for p in y.tt_data[x] if p.sub_code == tr.sub_code) < 3:
 						break
-				y.sData.remove(tr)
-				y.tt_data[x].append(tr)
-				lt.append(tr.sub_code)
-	return clsr
+				y.sData.remove(tr) # Removing the selected subject from sample list
+				y.tt_data[x].append(tr) # Adding Subject to corresponding timetable field
+				sb[tr.sub_code].tt_data[x][i] = y # Linking class to subject for faculty timetable
+				lt.append(tr.sub_code) # Adding to deque
+	return clsr,sb

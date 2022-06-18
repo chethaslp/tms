@@ -28,8 +28,8 @@
     <center>
         <h5>View as: </h5>
         <div class="btn-group" role="group">
-            <a class="btn btn-light active" disabled>Class wise</a>
-            <a class="btn btn-light" href="/timetable_faculty/{{key}}">Faculty wise</a>
+            <a class="btn btn-light" href="/timetable/{{key}}">Class wise</a>
+            <a class="btn btn-light active" disabled>Faculty wise</a>
         </div>
     </center>
     <br><hr><br>
@@ -54,9 +54,10 @@
     <div id="clsCarousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
     
-    {% for s in clsr %}
+    {% for s in sbs %}
+    {% set s = sbs[s]%}
     <div class="carousel-item {% if loop.index == 1%}active{%endif%}">
-    <h3 class="text-center"> Timetable for {{ s.name }}</h3>
+    <h3 class="text-center"> Timetable for {{ s.title }}</h3>
     <div height="5"></div>
         <table class="table table-bordered table-hover center">
             <thead>
@@ -73,7 +74,7 @@
             </thead>{% for x in range(s.getData()[0] | length) %}
                 <tr>
                     <th scope="row" class="table-dark">{{ loop.index }}</th> 
-                    {% for y in range(s.getData() | length) %} {% set j = s.getData()[y][x] %} {% if j.is_practical %} {% set c = "p1" %} {% else %} {% set c = "p2" %} {% endif %} <td class="{{c}}">{{j.title}}</td>
+                    {% for y in range(s.getData() | length) %} {% set j = s.getData()[y][x] %} {% if not j %} <td class="p1">Free</td>{% else %} <td class="p2">{{j.name}}</td>{% endif %}
                     {% endfor %}
                 </tr>
             {% endfor %}

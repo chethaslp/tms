@@ -3,7 +3,7 @@ from jsonic import Serializable
 
 class Subject(Serializable):
 	"""docstring for Subject"""
-	def __init__(self, sub_code, title, sub_priority, t_name="", is_practical=False ):
+	def __init__(self, sub_code, title, sub_priority=0, t_name="", is_practical=False ):
 		super(Subject, self).__init__()
 
 		self.t_name = t_name
@@ -12,6 +12,13 @@ class Subject(Serializable):
 		self.sub_code = sub_code
 		self.sub_priority = sub_priority
 
+		self.tt_data = []
+	
+	def initTT(self,pref):
+		self.tt_data = [[None for x in range(pref['t_period_pd'])] for _ in range(pref['t_day'])]
+
+	def getData(self):
+		return self.tt_data
 
 	def __eq__(self,sub):
 		if isinstance(sub,Subject):
@@ -26,8 +33,6 @@ class Subject(Serializable):
 	
 	def toJson(self):
 		return json.dumps(self.__dict__)
-
-
 
 class Classroom(Serializable):
 	"""docstring for Classroom"""
@@ -45,3 +50,8 @@ class Classroom(Serializable):
 
 	def getData(self):
 		return self.tt_data
+
+class SubjectSet():
+	def __init__(self,name,data):
+		self.name = name
+		self.data = data
