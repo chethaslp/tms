@@ -39,11 +39,11 @@
         <button type="button" class="btn btn-light" href="#clsCarousel" data-slide="prev"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
         <div class="btn-group" role="group">
           <button id="btnGroupDrop1" type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            View Class
+            View Subject
           </button>
           <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            {% for s in clsr %}
-            <button class="dropdown-item" onclick="$('#clsCarousel').carousel({{ loop.index -1 }})">{{ s.name }}</button>
+            {% for s in sbs %}
+            <button class="dropdown-item" onclick="$('#clsCarousel').carousel({{ loop.index -1 }})">{{ sbs[s].title }}</button>
             {% endfor %}
           </div>
         </div>

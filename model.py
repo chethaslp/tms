@@ -9,7 +9,7 @@ class Subject(Serializable):
 		self.t_name = t_name
 		self.is_practical = is_practical
 		self.title = title
-		self.sub_code = sub_code
+		self.sub_code = str(sub_code)
 		self.sub_priority = sub_priority
 
 		self.tt_data = []
@@ -36,12 +36,13 @@ class Subject(Serializable):
 
 class Classroom(Serializable):
 	"""docstring for Classroom"""
-	def __init__(self, name, cls_code, tt_data=[]):
+	def __init__(self, name, cls_code, tt_data=[], primary_sub=None):
 		super(Classroom, self).__init__()
 		
 		self.name = name
 		self.tt_data = tt_data
-		self.cls_code = cls_code
+		self.cls_code = (cls_code)
+		self.primary_sub = primary_sub
 
 		self.sData = []
 

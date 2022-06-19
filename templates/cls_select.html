@@ -1,6 +1,14 @@
 {% extends 'main.html' %}
 
 {% block content %}
+{% if (clss | length) == 0%}
+	<div class="card bg-danger text-white">
+		<h5 class="card-header">No Classes Added!</h5>
+		<div class="card-body">
+			<div class="card-text">Please add some classes to proceed.</div>
+		</div>
+	</div>
+{%else%}
   {% for i in clss %}
 	<ul class="list-group">
 		<li class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
@@ -21,14 +29,15 @@
 				<span class="input-group-text badge-primary"> {{clss | length}} </span>
 			</div>
 	</div>
-
-	<br><hr>
+	<br>
+{%endif%}
+	<hr>
 	<form class="card" method="post" style="padding: 5px;" action="">
-		<input type="text" name="a" value="as" hidden> 
+		<input type="text" name="a" value="ad" hidden> 
 		<h4 class="card-header">Add Class</h4>
 	  <div class="card-body">
 	    <div class="form-group col" style="padding: 10px;">
-	      <label for="cls_name">Class Title (*)</label>
+	      <label for="cls_name">Class Title</label>
 	      <input type="text" name="cls_name" class="form-control" id="cls_name" placeholder="Class title" required>
 	    </div>
 	    <div class="form-group col" style="padding: 10px;">
@@ -36,8 +45,12 @@
 	      <input type="number" name="cls_code" class="form-control" id="cls_code" placeholder="Class code" required>
 	    </div>
 	  <div class="form-group" style="padding: 10px;">
-	    <label for="sub_priority">Primary Subject</label>
-	    <input type="number" name="sub_priority" class="form-control" id="sub_priority" placeholder="7" required>
+	    <label for="cls_sub">Primary Subject</label>
+	    <select class="custom-select" name="cls_sub" required>
+			<option selected value="0">No Primary Subject</option>
+			{% for s in t_sub %}
+			<option value="{{s.sub_code}}">{{s.title}}</option>{%endfor%}
+		  </select>
 	  </div>
 	  <div class="row" style="padding: 10px;">
 		<button type="submit" class="btn btn-primary">Add Subject</button>
@@ -47,7 +60,7 @@
 <br>
 
 <!-- Dialog Box - Remove -->
-<div class="modal fade" id="rmcls-diag" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="rmcls-diag" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 	  <div class="modal-content">
 		<div class="modal-header">
@@ -69,12 +82,12 @@
   </div>
 
 <!-- Dialog Box - Edit -->
-<div class="modal fade" id="edcls-diag" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="edcls-diag" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
 	  <div class="modal-content">
 		<div class="modal-header">
 		  <h5 class="modal-title" id="rmsub-diag-title">Edit Subject</h5>
-		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <button type="button" class="close" data-dismiss="modal">
 			  <i class="fa fa-close"></i>
 		  </button>
 		</div>
@@ -84,7 +97,7 @@
 				<input type="text" name="sub_code" id="ed-sub_code" hidden>
 				<div class="card-body">
 					<div class="form-group col" style="padding: 10px;">
-					<label for="sub_title">Subject Title</label>
+					<label for="sub_title">Class Title</label>
 					<input type="text" name="sub_title" class="form-control" id="ed-sub_title" value= "" disabled>
 					</div>
 				<div class="form-group" style="padding: 10px;">

@@ -2,14 +2,21 @@ from operator import attrgetter
 from jsonic import serialize, deserialize
 from flask import Flask, redirect, render_template, send_from_directory, request, session
 from flask_session import Session
+import pymongo
 from func import *
 import uuid
 from model import Subject
 
+
+client = pymongo.MongoClient("mongodb+srv://db:db@cluster.ntzhw.mongodb.net/?retryWrites=true&w=majority")
+
 app = Flask(__name__ )
 app.debug = True
 app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = client
+app.config["SESSION_MONGODB_DB"] = 'tms'
+app.config["SESSION_MONGODB_COLLECT"] = 'sessions'
 Session(app)
 
 @app.route("/css/<path:path>")
@@ -54,8 +61,15 @@ def cls_select():
     try: pref = session['pref']
     except: return redirect("/pref")
 
-    if request.form.get("a") == "as":
-        c = Classroom(request.form.get("cls_name"),request.form.get("cls_code"))
+    try: t_sub = deserialize(session['t_sub'])
+    except: return redirect("/sub_select")
+
+    if request.form.get("a") == "ad":
+        if request.form.get("cls_sub") != "0":
+            cls_sub = [c for c in t_sub if str(c.sub_code) == str(request.form.get("cls_sub"))][0]
+        else:
+            cls_sub = None
+        c = Classroom(request.form.get("cls_name"),request.form.get("cls_code"),primary_sub=cls_sub)
         a = deserialize(session['cls'])
         a.append(c)
         session['cls'] = serialize(a)
@@ -75,31 +89,28 @@ def cls_select():
     try: clss = deserialize(session['cls'])
     except: 
         clss = generateClass(pref)
-        session['cls'] = clss
-    return render_template("cls_select.html",clss=clss)
+        session['cls'] = serialize(clss)
+    return render_template("cls_select.html",clss=clss,t_sub=t_sub)
 
 @app.route("/sub_select", methods=['GET','POST'])
 def root2():
     try: pref = session['pref']
     except: return redirect("/pref")
 
-    try: clss = session['cls']
-    except: return redirect("/cls_select")
-
     if request.method == "POST":
         if request.form.get("a") == "as":
-            c = Subject(int(request.form.get("sub_code")), request.values.get("sub_title"), int(request.values.get("sub_priority")), is_practical = bool(request.form.get("sub_prac") == "on"))
+            c = Subject(str(request.form.get("sub_code")), request.values.get("sub_title"), int(request.values.get("sub_priority")), is_practical = bool(request.form.get("sub_prac") == "on"))
             a = deserialize(session['t_sub'])
             a.append(c)
             session['t_sub'] = serialize(a)
         elif request.form.get("a") == "rm":
             a = deserialize(session['t_sub'])
-            a = [x for x in a if x.sub_code != int(request.form.get("sub_code"))]
+            a = [x for x in a if x.sub_code != str(request.form.get("sub_code"))]
             session['t_sub'] = serialize(a)
         elif request.form.get("a") == "ed":
             a = deserialize(session['t_sub'])
             for c in a:
-                if c.sub_code == int(request.form.get("sub_code")):
+                if c.sub_code == str(request.form.get("sub_code")):
                     c.sub_priority = int(request.form.get("sub_priority"))
                     c.is_practical = bool(request.form.get("sub_prac") == "on")
                     break
