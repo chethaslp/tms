@@ -1,4 +1,4 @@
 flask
 Flask-Session
 py-jsonic
-pymongo=3.12,3
+pymongo==3.12.3
