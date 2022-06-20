@@ -11,7 +11,6 @@ from model import Subject
 client = pymongo.MongoClient("mongodb+srv://db:db@cluster.ntzhw.mongodb.net/?retryWrites=true&w=majority")
 
 app = Flask(__name__ )
-app.debug = True
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "mongodb"
 app.config["SESSION_MONGODB"] = client
@@ -155,4 +154,5 @@ import os
 if os.environ.get('PORT'):
     app.run(port=os.environ['PORT'],host='0.0.0.0')
 else:
+    app.debug = True
     app.run()
